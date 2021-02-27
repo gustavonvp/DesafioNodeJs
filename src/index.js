@@ -1,10 +1,13 @@
 
 const express = require('express')
 
+const cors = require('cors')
+
 const {uuid, isUuid} = require('uuidv4')
 
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 
 const projects = []
@@ -25,7 +28,7 @@ function validateProjectId(req,res,next){
     const {id} = req.params
 
     if(!isUuid(id)){
-        return res.status(400).json({error: 'Invalid Project ID'})
+        return res.status(400).json({error: 'Invalid repository ID'})
     }
 
     return next()
@@ -45,14 +48,14 @@ function contaLikes(req,res,next){
 }
 
 app.use(logRequests)
-app.use('/projects/:id',validateProjectId)
+app.use('/repositories/:id',validateProjectId)
 
-app.get('/projects',(req, res) => {
+app.get('/repositories',(req, res) => {
     const {projetcs} = req.query
     return res.json(projects)
 })
 
-app.post('/projects',(req,res) => {
+app.post('/repositories',(req,res) => {
     
     const {title,url,techs,likes} = req.body
     
@@ -63,7 +66,7 @@ app.post('/projects',(req,res) => {
     return res.json(project)
 })
 
-app.put('/projects/:id',contaLikes,(req,res) => {
+app.put('/repositories/:id',contaLikes,(req,res) => {
     const {id} = req.params
     
     const {title, url, techs, likes} = req.body
@@ -89,7 +92,7 @@ app.put('/projects/:id',contaLikes,(req,res) => {
 
 })
 
-app.delete('/projects/:id',(req,res) => {
+app.delete('/repositories/:id',(req,res) => {
     const {id} = req.params
     
     const projectIndex = projects.findIndex(project=>project.id == id)
@@ -103,7 +106,7 @@ app.delete('/projects/:id',(req,res) => {
     return res.status(204).send()
 })
 
-app.put("/projects/:id/like",(req,res) =>{
+app.put("/repositories/:id/like",(req,res) =>{
     const {id} = req.params
 
     const projectIndex = projects.findIndex(project=>project.id == id)
